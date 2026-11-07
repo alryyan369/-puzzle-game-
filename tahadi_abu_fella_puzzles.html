@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#100d1c">
+<title>تحدي أبو فلة للألغاز</title>
+<style>
+:root{color-scheme:dark;--bg:#100d1c;--panel:#1d1830;--panel2:#29213e;--purple:#a78bfa;--text:#f7f3ff;--muted:#bdb2d5;--good:#36c98b;--bad:#ff7185}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(circle at 50% 0,#33204f 0,#171126 42%,#0c0a14 100%);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--text);display:flex;justify-content:center;padding:18px 14px 30px}
+main{width:min(100%,520px)}header{text-align:center;padding:22px 8px 16px}.orb{width:76px;height:76px;margin:0 auto 12px;border-radius:24px;background:linear-gradient(145deg,#6842a4,#251b40);display:grid;place-items:center;font-size:38px;box-shadow:0 0 38px #8b5cf655;border:1px solid #bda4ff55}
+h1{font-size:clamp(25px,7vw,34px);margin:0;color:#e8dcff}header p{color:var(--muted);margin:8px 0 0;font-size:14px}
+.card{background:#1b1729ee;border:1px solid #76609855;border-radius:22px;padding:18px;box-shadow:0 16px 45px #0005;margin:12px 0}
+.row{display:flex;align-items:center;justify-content:space-between;gap:10px}.pill{font-size:12px;padding:7px 11px;border-radius:99px;background:#38294f;color:#e1d2ff}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}.stat{background:#29213e;border-radius:15px;padding:12px;text-align:center}.stat b{display:block;font-size:22px;color:#d8c5ff}.stat span{font-size:12px;color:var(--muted)}
+.progress{height:7px;background:#39304a;border-radius:20px;overflow:hidden;margin:14px 0}.bar{height:100%;width:0;background:linear-gradient(90deg,#8055d6,#c4a5ff);transition:width .25s}
+h2{font-size:21px;line-height:1.6;margin:12px 0 18px}.answers{display:grid;gap:10px}.answer{width:100%;text-align:right;background:#2b2340;border:1px solid #69548688;border-radius:14px;padding:14px;color:var(--text);font-size:16px;font-weight:600;cursor:pointer}.answer:disabled{cursor:default;opacity:1}.answer.correct{background:#164936;border-color:var(--good)}.answer.wrong{background:#542536;border-color:var(--bad)}
+.feedback{display:none;margin-top:14px;padding:13px;border-radius:14px;background:#2b2340;line-height:1.7}.feedback.show{display:block}.feedback.good{border:1px solid var(--good)}.feedback.bad{border:1px solid var(--bad)}
+button.primary{width:100%;border:0;border-radius:15px;padding:14px;background:linear-gradient(100deg,#7449bd,#a477ed);color:white;font-size:16px;font-weight:800;cursor:pointer;margin-top:14px}
+button.secondary{background:#302744;border:1px solid #725a91;color:#e9ddff;border-radius:13px;padding:11px 14px;font-weight:700}
+.center{text-align:center}.hidden{display:none!important}.small{font-size:12px;color:var(--muted);line-height:1.7}.timer{font-variant-numeric:tabular-nums;color:#f4d58b;font-weight:800}
+footer{text-align:center;color:#9489a9;font-size:11px;padding:14px 8px}
+</style>
+</head>
+<body>
+<main>
+<header><div class="orb">🧩</div><h1>تحدي أبو فلة للألغاز</h1><p>اختبر ذكاءك… هل تستطيع تجاوز كل التحديات؟</p></header>
+<section id="home" class="card">
+ <div class="row"><span class="pill">🌙 إصدار الألغاز</span><span class="pill">3 أسئلة في الجولة</span></div>
+ <div class="stats"><div class="stat"><b id="bestHome">0</b><span>أفضل نتيجة</span></div><div class="stat"><b>🧠</b><span>فكّر قبل الإجابة</span></div></div>
+ <p class="small">اختر الإجابة الصحيحة لتحصل على 10 نقاط. لكل سؤال شرح بعد الإجابة، وحاول تحطيم رقمك القياسي!</p>
+ <button class="primary" id="start">ابدأ التحدي</button>
+</section>
+<section id="game" class="card hidden">
+ <div class="row"><span class="pill" id="level">المرحلة 1</span><span class="pill">⭐ <span id="score">0</span> نقطة</span><span class="timer" id="timer">⏱ 20</span></div>
+ <div class="progress"><div class="bar" id="bar"></div></div>
+ <div class="row"><span class="small" id="counter">السؤال 1 من 3</span><span class="small">اختر إجابة واحدة</span></div>
+ <h2 id="question"></h2><div class="answers" id="answers"></div>
+ <div class="feedback" id="feedback"></div>
+ <button class="primary hidden" id="next">السؤال التالي</button>
+</section>
+<section id="result" class="card hidden center">
+ <div style="font-size:48px">🏆</div><h2>انتهى التحدي!</h2><p id="resultText"></p><div class="stats"><div class="stat"><b id="finalScore">0</b><span>نقاطك</span></div><div class="stat"><b id="correctCount">0/3</b><span>إجابات صحيحة</span></div></div>
+ <button class="primary" id="again">العب من جديد</button>
+ <button class="secondary" id="homeBtn" style="margin-top:10px">العودة للرئيسية</button>
+</section>
+<footer>لعبة ألغاز جماهيرية غير رسمية، وليست تطبيقاً تابعاً أو معتمداً من أبو فلة.</footer>
+</main>
+<script>
+const rounds=[
+[
+{q:"ما الشيء الذي كلما أخذت منه كبر؟",a:["الحفرة","البحر","الكتاب","الجبل"],c:0,e:"الحفرة تكبر كلما أزلت منها التراب."},
+{q:"ما الشيء الذي له أسنان ولا يعض؟",a:["الأسد","المشط","التمساح","الذئب"],c:1,e:"المشط له أسنان، لكنه لا يعض!"},
+{q:"ما العدد التالي: 2، 4، 8، 16، ؟",a:["18","24","32","30"],c:2,e:"كل عدد يساوي ضعف العدد الذي قبله."}
+],
+[
+{q:"شيء يكتب ولا يقرأ، ما هو؟",a:["القلم","الكتاب","الهاتف","الساعة"],c:0,e:"القلم يكتب، لكنه لا يقرأ."},
+{q:"كم شهراً في السنة يحتوي على 28 يوماً؟",a:["شهر واحد","شهران","6 أشهر","كل الشهور"],c:3,e:"كل شهر يحتوي على 28 يوماً على الأقل."},
+{q:"ما الشيء الذي يسمع بلا أذن ويتكلم بلا لسان؟",a:["الصدى","المرآة","الكرسي","الماء"],c:0,e:"الصدى يعيد الصوت الذي يسمعه."}
+],
+[
+{q:"إذا كان لديك 3 تفاحات وأخذتَ 2، فكم تفاحة معك؟",a:["1","2","3","5"],c:1,e:"أنت أخذت تفاحتين، إذن معك تفاحتان."},
+{q:"ما العدد الذي إذا ضربته بنفسه ثم أضفت إليه نفسه كان الناتج 12؟",a:["2","3","4","6"],c:1,e:"3 × 3 + 3 = 12."},
+{q:"أمامك بابان: أحدهما يؤدي للخروج والآخر لطريق مسدود. ما أول شيء تحتاجه لتختار؟",a:["مفتاح ذهبي","معلومة عن البابين","مصباح","حقيبة"],c:1,e:"تحتاج إلى معلومة موثوقة عن البابين قبل الاختيار."}
+]
+];
+let level=0,index=0,score=0,correct=0,seconds=20,tick=null,locked=false;
+const $=id=>document.getElementById(id);
+function show(which){["home","game","result"].forEach(x=>$(x).classList.toggle("hidden",x!==which))}
+function best(){return Number(localStorage.getItem("puzzleBest")||0)}
+function updateBest(){$("bestHome").textContent=best()}
+function start(){level=0;index=0;score=0;correct=0;show("game");render()}
+function render(){
+ locked=false;clearInterval(tick);seconds=20;$("timer").textContent="⏱ "+seconds;
+ const item=rounds[level][index];$("level").textContent="المرحلة "+(level+1);$("score").textContent=score;
+ $("counter").textContent=`السؤال ${index+1} من 3`;$("bar").style.width=((index/3)*100)+"%";
+ $("question").textContent=item.q;$("answers").innerHTML="";$("feedback").className="feedback";$("feedback").textContent="";$("next").classList.add("hidden");
+ item.a.forEach((a,i)=>{let b=document.createElement("button");b.className="answer";b.textContent=String.fromCharCode(65+i)+" · "+a;b.onclick=()=>choose(i);$("answers").appendChild(b)});
+ tick=setInterval(()=>{seconds--;$("timer").textContent="⏱ "+seconds;if(seconds<=0)choose(-1)},1000);
+}
+function choose(i){
+ if(locked)return;locked=true;clearInterval(tick);const item=rounds[level][index];const buttons=[...$("answers").children];
+ buttons.forEach((b,n)=>{b.disabled=true;if(n===item.c)b.classList.add("correct");else if(n===i)b.classList.add("wrong")});
+ const ok=i===item.c;if(ok){score+=10;correct++;$("score").textContent=score}
+ const f=$("feedback");f.className="feedback show "+(ok?"good":"bad");f.innerHTML=(ok?"<b>إجابة صحيحة! 🎉</b><br>":"<b>ليست هذه الإجابة الصحيحة.</b><br>")+item.e;
+ $("next").textContent=(index===2&&level===2)?"عرض النتيجة":(index===2?"المرحلة التالية":"السؤال التالي");$("next").classList.remove("hidden");
+}
+function next(){if(!locked)return;if(index<2){index++;render()}else if(level<2){level++;index=0;render()}else finish()}
+function finish(){clearInterval(tick);if(score>best())localStorage.setItem("puzzleBest",score);$("finalScore").textContent=score;$("correctCount").textContent=correct+"/9";$("resultText").textContent=score>=70?"أداء رائع! عقل متقد وتفكير ممتاز.":score>=40?"أحسنت! واصل التدريب لتحقق نتيجة أعلى.":"بداية جيدة! جرّب مرة أخرى وحسّن نتيجتك.";updateBest();show("result")}
+$("start").onclick=start;$("again").onclick=start;$("next").onclick=next;$("homeBtn").onclick=()=>{show("home");updateBest()};updateBest();
+</script>
+</body></html>
